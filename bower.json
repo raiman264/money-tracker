@@ -1,0 +1,15 @@
+{
+  "name": "monet-tracker",
+  "version": "0.1.0",
+  "main": "css/main.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    
+  },
+  "devDependencies": {
+    "<test-framework-name>": "<version>"
+  }
+}
