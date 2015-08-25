@@ -60,6 +60,9 @@ class TelegramBot {
         }
 
         $updates = $this->request('getUpdates',$options,"POST");
+
+        #error_log(print_r($updates,1));
+        print_r($updates);
         return ($updates);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-require "../classes/moneyTracker.php";
+require realpath(dirname(__FILE__))."/../../classes/moneyTracker.php";
 
 class MoneyBot extends TelegramBot{
 
@@ -13,6 +13,21 @@ class MoneyBot extends TelegramBot{
         $this->moneyTracker = new MoneyTracker();
     }
 
+    public function isValidUser($userTelegramId) {
+        $validUser = array (
+            "113812545" => "1"
+        );
+
+        if (isset($validUser[$userTelegramId])) {
+            _log("valid user");
+            return $validUser[$userTelegramId];
+        }
+
+        error_log("User ".$userTelegramId." is not valid");
+
+        return false;
+    }
+
     public function runUpdates($offset) {
         $updates = $this->getUpdates($offset, $this->updatesProcessLimit);
 
@@ -20,7 +35,7 @@ class MoneyBot extends TelegramBot{
         if (isset($updates) && $updates->ok) {
             foreach ($updates->result as $update) {
                 $lastUpdate = $update->update_id;
-                if (isset($update->message)) {
+                if (isset($update->message) && $this->isValidUser($update->message->from->id)) {
                     $this->processMessage($update->message);
                 }
             }
@@ -73,7 +88,7 @@ class MoneyBot extends TelegramBot{
 
         if (isset($text)) {
             _log($text);
-            //$this->sendMessage($message->chat->id,$text,array("reply_to_message_id" => $message->message_id));
+            #$this->sendMessage($message->chat->id,$text,array("reply_to_message_id" => $message->message_id));
         }
     }
 }

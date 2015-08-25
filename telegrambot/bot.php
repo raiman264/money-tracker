@@ -10,28 +10,23 @@ function _log($str) {
 }
 
 
-#vendor libraries
-require "../vendor/idiorm/idiorm.php";
 
 #own libraries
-require "classes/TelegramBotAPI.php";
-require "classes/moneyBot.php";
+require realpath(dirname(__FILE__))."/classes/TelegramBotAPI.php";
+require realpath(dirname(__FILE__))."/classes/moneyBot.php";
 
 #config
-require "../config/db_config.php";
+require realpath(dirname(__FILE__))."/../config/config.php";
+
+require realpath(dirname(__FILE__))."/../helpers/init_db_conex.php";
+
+
 
 $bot = new MoneyBot(BOT_AUTH_TOKEN);
 
 $mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 
 $user_id = 1; // waiting to have a ssystem for more users
-
-ORM::configure(array(
-    'connection_string' => 'mysql:host='.DB_SERVER.';dbname='.DB_NAME,
-    'username' => DB_USER,
-    'password' => DB_PASS,
-    'driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8')
-));
 
 $lastUpdate = ORM::for_table('user_config')
             ->select('value')
@@ -56,6 +51,6 @@ $updates = $bot->runUpdates($offset);
 
 if ($updates->lastUpdate) {
     $lastUpdate->value = $updates->lastUpdate;
-    //$lastUpdate->save();
+    $lastUpdate->save();
 }
 

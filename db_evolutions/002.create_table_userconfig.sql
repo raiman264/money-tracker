@@ -1,4 +1,6 @@
-CREATE TABLE `user_config` (
+USE `money_tracker`;
+
+CREATE TABLE IF NOT EXISTS `user_config` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `user_id` INT(10) NOT NULL,
   `config_type` VARCHAR(50) NOT NULL,
