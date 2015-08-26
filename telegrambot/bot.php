@@ -29,6 +29,7 @@ $mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 $user_id = 1; // waiting to have a ssystem for more users
 
 $lastUpdate = ORM::for_table('user_config')
+            ->select('id')
             ->select('value')
             ->where(array(
                 'user_id' => $user_id,
