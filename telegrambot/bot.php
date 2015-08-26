@@ -1,8 +1,8 @@
 <?php
 
 ini_set("display_errors", true);
+ini_set("error_log", "bot_log.txt");
 error_reporting(E_ALL);
-error_log("bot_log.txt");
 
 
 function _log($str) {

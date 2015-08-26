@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "config/db_config.php";
+include "config/config.php";
 
 if(isset($_POST['amount'])){
 

@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "config/db_config.php";
+include "config/config.php";
 
 function decimal_to_rgb($int) {
     $max_value = 16777215;
@@ -45,7 +45,7 @@ function decimal_to_rgb($int) {
 <?php
 
     $result = $mysqli->query("
-        SELECT * FROM `data`;
+        SELECT * FROM `data` ORDER BY `date` DESC;
     ");
 
     $charting_data = array();
@@ -88,7 +88,7 @@ function decimal_to_rgb($int) {
         $value['highlight'] = "#".decimal_to_rgb($color-$color_shift/2);
         $chart_array[] = $value;
     }
-    print_r($chart_array)
+    #print_r($chart_array)
 ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
 <script type="text/javascript">
