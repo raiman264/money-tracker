@@ -80,7 +80,9 @@ class MoneyBot extends TelegramBot{
                 }
                 
                 break;
-            
+            case '/ping':
+                $text = "pong";
+                break;
             default:
                 $text = " I didn't understand your command :( ";
                 break;
