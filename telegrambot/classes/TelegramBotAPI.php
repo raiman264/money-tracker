@@ -90,7 +90,7 @@ class TelegramBot {
             }
         }
 
-       # $message = $this->request('sendMessage',$data,"POST");
+       $message = $this->request('sendMessage',$data,"POST");
 
         return $message;
     }
