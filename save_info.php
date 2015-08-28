@@ -13,6 +13,8 @@ if(isset($_POST['amount'])){
         echo "Failed to connect to MySQL: " . $mysqli->connect_error;
     }
 
+    $date = strtotime($_POST['date']);
+
     $res = $mysqli->query("
         INSERT INTO `data`(`concept`,`amount`,`label`,`source`,`date`)
         VALUES(
@@ -20,7 +22,7 @@ if(isset($_POST['amount'])){
             '{$_POST['amount']}',
             '{$_POST['label']}',
             'web',
-            '{$_POST['date']}'
+            '{$date}'
         );
 
     ");

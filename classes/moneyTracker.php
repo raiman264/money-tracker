@@ -14,6 +14,10 @@ class MoneyTracker {
         
         $newEntry = ORM::for_table('data')->create();
         
+        if (!is_integer($date)) {
+            $date = strtotime($date);
+        }
+
         $newEntry->amount = $amount;
         $newEntry->concept = $concept;
         $newEntry->date = $date;

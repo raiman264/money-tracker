@@ -70,7 +70,7 @@ class MoneyBot extends TelegramBot{
                     $res = $this->moneyTracker->newEntry(
                         $params[0],
                         $params[1],
-                        date("Y-m-d H:i:s",$message->date),
+                        $message->date,
                         isset($params[2]) ? $params[2] : "",
                         "bot"
                     );
