@@ -16,14 +16,21 @@ if( validate_request($_GET['u'],$_GET['k']) ){
   $ch = curl_init( $_GET['u'] );
 
   curl_setopt( $ch, CURLOPT_POST, true );
-  curl_setopt( $ch, CURLOPT_POSTFIELDS, $_POST );
+
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($request_body)
+  ));
+
+  curl_setopt( $ch, CURLOPT_POSTFIELDS, $request_body );
 
   curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
   // curl_setopt( $ch, CURLOPT_HEADER, true );
   curl_setopt( $ch, CURLOPT_RETURNTRANSFER, false );
 
-  curl_setopt( $ch, CURLOPT_USERAGENT, USER_AGENT);
+  curl_setopt( $ch, CURLOPT_USERAGENT, PROXY_USER_AGENT);
 
+  // curl_setopt ($ch, CURLOPT_CAINFO, dirname(__FILE__)."/trust_cert.pem");
 
   curl_exec( $ch );
 
@@ -39,9 +46,9 @@ if( validate_request($_GET['u'],$_GET['k']) ){
 
 function validate_request($url,$code) {
   $algo = "sha1";
-  $signature = hash_hmac ( $algo , $url , KEY);
+  $signature = hash_hmac ( $algo , $url , PROXY_KEY);
 
-  if(isset($_GET[KEY]))
+  if(isset($_GET[PROXY_KEY]))
     die($signature);
 
   return $code == $signature;
