@@ -11,12 +11,6 @@ function _log($str) {
     error_log($str);
 }
 
-_log(time());
-$request_body = file_get_contents('php://input');
-_log($request_body);
-
-die;
-
 #own libraries
 require realpath(dirname(__FILE__))."/classes/TelegramBotAPI.php";
 require realpath(dirname(__FILE__))."/classes/moneyBot.php";
@@ -27,6 +21,8 @@ require realpath(dirname(__FILE__))."/../config/config.php";
 require realpath(dirname(__FILE__))."/../helpers/init_db_conex.php";
 
 
+$request_body = file_get_contents('php://input');
+
 
 $bot = new MoneyBot(BOT_AUTH_TOKEN);
 
@@ -34,30 +30,44 @@ $mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 
 $user_id = 1; // waiting to have a ssystem for more users
 
-$lastUpdate = ORM::for_table('user_config')
-            ->select('id')
-            ->select('value')
-            ->where(array(
-                'user_id' => $user_id,
-                'config_type' => 'bot_lastUpdate'
-            ))
-            ->find_one();
+if ( !empty($request_body) ) {
+    #webhook request
+    $update = json_decode($request_body);
+    $bot->processMessage($update->message);
 
-if ($lastUpdate) {
-    echo $lastUpdate->value;
-    $offset = $lastUpdate->value + 1;
-} else {
-    echo "not set";
     $lastUpdate = ORM::for_table('user_config')->create();
     $lastUpdate->user_id = $user_id;
     $lastUpdate->config_type = 'bot_lastUpdate';
-    $offset = 0;
-}
-
-$updates = $bot->runUpdates($offset);
-
-if ($updates->lastUpdate) {
-    $lastUpdate->value = $updates->lastUpdate;
+    $lastUpdate->value = $update->update_id;
     $lastUpdate->save();
-}
 
+} else {
+    #cronjob, getUpdates method
+
+    $lastUpdate = ORM::for_table('user_config')
+                ->select('id')
+                ->select('value')
+                ->where(array(
+                    'user_id' => $user_id,
+                    'config_type' => 'bot_lastUpdate'
+                ))
+                ->find_one();
+
+    if ($lastUpdate) {
+        echo $lastUpdate->value;
+        $offset = $lastUpdate->value + 1;
+    } else {
+        echo "not set";
+        $lastUpdate = ORM::for_table('user_config')->create();
+        $lastUpdate->user_id = $user_id;
+        $lastUpdate->config_type = 'bot_lastUpdate';
+        $offset = 0;
+    }
+
+    $updates = $bot->runUpdates($offset);
+
+    if ($updates->lastUpdate) {
+        $lastUpdate->value = $updates->lastUpdate;
+        $lastUpdate->save();
+    }
+}

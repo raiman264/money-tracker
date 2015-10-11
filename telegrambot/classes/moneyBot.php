@@ -90,7 +90,8 @@ class MoneyBot extends TelegramBot{
 
         if (isset($text)) {
             _log($text);
-            $this->sendMessage($message->chat->id,$text,array("reply_to_message_id" => $message->message_id));
+            //array("reply_to_message_id" => $message->message_id)
+            $this->sendMessage($message->chat->id,$text);
         }
     }
 }
