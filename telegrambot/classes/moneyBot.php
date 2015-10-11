@@ -68,16 +68,25 @@ class MoneyBot extends TelegramBot{
             case '':
                 // test if it has the requirments for add a new entry
                 if ( is_numeric($params[0]) && isset($params[1])) {
+
+                    $date = $message->date;
+                    if ( isset( $params[3] ) ) {
+                        $tmp_date = strtotime( $params[3], $date );
+                        if ( $tmp_date != false ) {
+                            $date = $tmp_date;
+                        }
+                    }
+
                     $res = $this->moneyTracker->newEntry(
                         $params[0],
                         $params[1],
-                        $message->date,
+                        $date,
                         isset($params[2]) ? $params[2] : "",
                         "bot"
                     );
                     $text = "Your entry has been saved";
                 } else {
-                    $text = "Error parsing parameters, the proper way is \n/add <money_amount>, <concept>, <label>";
+                    $text = "Error parsing parameters, the proper way is \n/add <money_amount>, <concept>, <label [opt]>, <date [opt]>";
                 }
                 
                 break;
