@@ -6,6 +6,8 @@
     from a Server with Trusted Certifcate
     to a server with a self signed certificate
 
+    Use Get params, u => url, k => validation key 
+    inorder to get the validation key you need to make a call using 'u' and '<your-secret-key>' (aka PROXY_KEY) as params
  */
 
 require("../config/config.php");
@@ -19,16 +21,18 @@ if( validate_request($_GET['u'],$_GET['k']) ){
   curl_setopt( $ch, CURLOPT_POSTFIELDS, $_POST );
 
   curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-  // curl_setopt( $ch, CURLOPT_HEADER, true );
+  //curl_setopt( $ch, CURLOPT_HEADER, true );
+  //curl_setopt ($ch, CURLOPT_CAINFO, dirname(__FILE__)."/cacert.pem");
+
   curl_setopt( $ch, CURLOPT_RETURNTRANSFER, false );
 
-  curl_setopt( $ch, CURLOPT_USERAGENT, USER_AGENT);
+  curl_setopt( $ch, CURLOPT_USERAGENT, PROXY_USER_AGENT);
 
 
   curl_exec( $ch );
 
   $status = curl_getinfo( $ch );
-  var_dump($status);
+  print_r($status);
 
   curl_close( $ch );
 } else {
@@ -38,10 +42,10 @@ if( validate_request($_GET['u'],$_GET['k']) ){
 
 
 function validate_request($url,$code) {
-  $algo = "sha1";
-  $signature = hash_hmac ( $algo , $url , KEY);
+  $encType = "sha1";
+  $signature = hash_hmac ( $encType , $url , PROXY_KEY);
 
-  if(isset($_GET[KEY]))
+  if(isset($_GET[PROXY_KEY]))
     die($signature);
 
   return $code == $signature;

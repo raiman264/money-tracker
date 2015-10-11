@@ -1,15 +1,21 @@
 <?php
 
 ini_set("display_errors", true);
-ini_set("error_log", "bot_log.txt");
+ini_set("error_log", realpath(dirname(__FILE__))."/bot_log.txt");
 error_reporting(E_ALL);
 
 
 function _log($str) {
     echo $str."\n";
+    file_put_contents(realpath(dirname(__FILE__))."/test_bot.txt", $str."\n",FILE_APPEND);
+    error_log($str);
 }
 
+_log(time());
+$request_body = file_get_contents('php://input');
+_log($request_body);
 
+die;
 
 #own libraries
 require realpath(dirname(__FILE__))."/classes/TelegramBotAPI.php";

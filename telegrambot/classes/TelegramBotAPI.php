@@ -12,6 +12,7 @@ class TelegramBot {
         $url = $this->api_url.$this->auth_token."/".$method;
         _log($url);
 
+        $encodePostFields = true;
         $ch = curl_init($url);
 
         #CURLOPT_PUT
@@ -25,8 +26,13 @@ class TelegramBot {
         if(isset($data)) {
 
             switch ($verb) {
+                case "FILE":
+                    $headers = array("Content-Type:multipart/form-data");
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                    $encodePostFields = false;
+
                 case "POST":
-                    curl_setopt($ch, CURLOPT_POST, 1); 
+                    curl_setopt($ch, CURLOPT_POST, 1);
                     break;
                 
                 default:
@@ -34,14 +40,16 @@ class TelegramBot {
                     break;
             }
 
-            $encoded = "";
+            if ( $encodePostFields ) {
+                $encoded = "";
 
-            foreach($data as $name => $value) {
-                $encoded .= urlencode($name).'='.urlencode($value).'&';
+                foreach($data as $name => $value) {
+                    $encoded .= urlencode($name).'='.urlencode($value).'&';
+                }
+                // chop off last ampersand
+                $data = substr($encoded, 0, strlen($encoded)-1);
             }
-            // chop off last ampersand
-            $encoded = substr($encoded, 0, strlen($encoded)-1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,  $encoded);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
         }
 
@@ -62,7 +70,7 @@ class TelegramBot {
         $updates = $this->request('getUpdates',$options,"POST");
 
         #error_log(print_r($updates,1));
-        print_r($updates);
+        #print_r($updates);
         return ($updates);
     }
 
@@ -90,8 +98,22 @@ class TelegramBot {
             }
         }
 
-       $message = $this->request('sendMessage',$data,"POST");
+        $message = $this->request('sendMessage',$data,"POST");
 
         return $message;
+    }
+
+    /**
+     * setWebhook
+     * When webhook is setted getUpdates will not work
+     * @param string $url  target URL for the webhook
+     * @param string $cert CA cert to trust in, in case you use a self signed certificate
+     */
+    public function setWebhook($url, $cert = null) {
+        $data = array("url" => $url);
+        if ( isset($cert) ) {
+            $data["certificate"] = curl_file_create( $cert, "application/octet-stream", "certificate" );
+        }
+        return $this->request("setWebhook", $data, "FILE");
     }
 }

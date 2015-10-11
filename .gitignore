@@ -1,2 +1,6 @@
 config/*
 examples/
+
+#logfiles
+bot_log.txt
+test_bot.txt
