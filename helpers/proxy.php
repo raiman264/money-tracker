@@ -18,7 +18,13 @@ if( validate_request($_GET['u'],$_GET['k']) ){
   $ch = curl_init( $_GET['u'] );
 
   curl_setopt( $ch, CURLOPT_POST, true );
-  curl_setopt( $ch, CURLOPT_POSTFIELDS, $_POST );
+
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($request_body)
+  ));
+
+  curl_setopt( $ch, CURLOPT_POSTFIELDS, $request_body );
 
   curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
   //curl_setopt( $ch, CURLOPT_HEADER, true );
@@ -27,7 +33,6 @@ if( validate_request($_GET['u'],$_GET['k']) ){
   curl_setopt( $ch, CURLOPT_RETURNTRANSFER, false );
 
   curl_setopt( $ch, CURLOPT_USERAGENT, PROXY_USER_AGENT);
-
 
   curl_exec( $ch );
 
