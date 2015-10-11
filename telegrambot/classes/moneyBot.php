@@ -60,11 +60,12 @@ class MoneyBot extends TelegramBot{
             $params = explode(" ",trim($matches[2][0]));
         }
 
-        print_r(array($command,$params));
+        //print_r(array($command,$params));
 
         switch ($command) {
             case '/a':
             case '/add':
+            case '':
                 // test if it has the requirments for add a new entry
                 if ( is_numeric($params[0]) && isset($params[1])) {
                     $res = $this->moneyTracker->newEntry(
