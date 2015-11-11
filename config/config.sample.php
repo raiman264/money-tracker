@@ -1,10 +1,12 @@
 <?php
 
     #telegram bot
-    define('BOT_AUTH_TOKEN', '118333850:AAEaHTH9N--zoQTg44dw959xon4jmCZ9y3Y');
     define('BOT_AUTH_TOKEN', '112233445:AAVvBbFFD--qwertyqwertyqwertyqwerty');
 
-    #data base
+    #set as mysql or gDataStore for google data store
+    define("DATA_STORE_TYPE", "mysql");
+
+    #data base MySQL
     define("DB_SERVER", "localhost");
     define("DB_USER", "root");
     define("DB_PASS", "");

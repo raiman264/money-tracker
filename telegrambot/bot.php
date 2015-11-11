@@ -12,21 +12,19 @@ function _log($str) {
 }
 
 #own libraries
-require realpath(dirname(__FILE__))."/classes/TelegramBotAPI.php";
-require realpath(dirname(__FILE__))."/classes/moneyBot.php";
+require_once realpath(dirname(__FILE__))."/classes/TelegramBotAPI.php";
+require_once realpath(dirname(__FILE__))."/classes/moneyBot.php";
 
 #config
-require realpath(dirname(__FILE__))."/../config/config.php";
+require_once realpath(dirname(__FILE__))."/../config/config.php";
 
-require realpath(dirname(__FILE__))."/../helpers/init_db_conex.php";
+require_once realpath(dirname(__FILE__))."/../helpers/init_db_conex.php";
 
 
 $request_body = file_get_contents('php://input');
 
 
-$bot = new MoneyBot(BOT_AUTH_TOKEN);
-
-$mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+$bot = new MoneyBot( BOT_AUTH_TOKEN, $db_connect );
 
 $user_id = 1; // waiting to have a ssystem for more users
 
@@ -35,11 +33,11 @@ if ( !empty($request_body) ) {
     $update = json_decode($request_body);
     $bot->processMessage($update->message);
 
-    $lastUpdate = ORM::for_table('user_config')->create();
-    $lastUpdate->user_id = $user_id;
-    $lastUpdate->config_type = 'bot_lastUpdate';
-    $lastUpdate->value = $update->update_id;
-    $lastUpdate->save();
+    // $lastUpdate = ORM::for_table('user_config')->create();
+    // $lastUpdate->user_id = $user_id;
+    // $lastUpdate->config_type = 'bot_lastUpdate';
+    // $lastUpdate->value = $update->update_id;
+    // $lastUpdate->save();
 
 } else {
     #cronjob, getUpdates method

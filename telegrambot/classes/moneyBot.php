@@ -1,16 +1,17 @@
 <?php
 
-require realpath(dirname(__FILE__))."/../../classes/moneyTracker.php";
+require_once realpath(dirname(__FILE__))."/../../classes/connectionModel.php";
+require_once realpath(dirname(__FILE__))."/../../classes/moneyTracker.php";
 
 class MoneyBot extends TelegramBot{
 
     public $updatesProcessLimit = 100;
     public $moneyTracker = null;
 
-    public function __construct($token) {
+    public function __construct( $token, ConnectionModel $db_connect) {
         parent::__construct($token);
 
-        $this->moneyTracker = new MoneyTracker();
+        $this->moneyTracker = new MoneyTracker( $db_connect );
     }
 
     public function isValidUser($userTelegramId) {
