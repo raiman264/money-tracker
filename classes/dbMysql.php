@@ -32,4 +32,43 @@ class DBMySql extends ConnectionModel {
 
         return $newEntry->id();
     }
+
+    /**
+     * executes a query
+     * @param  string $query
+     * @param  array  $params assoc array of params used in the $query
+     * @return array          array of resulting rows
+     */
+    public function query( $query, array $params = array() ) {
+        $re = "/FROM\\s([^\\s]+)/i";
+        preg_match($re, $query, $matches);
+
+        $results = ORM::for_table( $matches[1] )->raw_query($query)->find_array();
+        return $results;
+    }
+
+    /**
+     * get info from db
+     * @param  mixed  $fields fields to retreive, could be array or string " * "
+     * @param  string $source name of the table
+     * @param  mixed  $filter or condition
+     * @param  string $limit  end of the subset of results
+     * @param  string $offset start of the subset of results
+     * @return array          array of rows
+     */
+    public function get( $fields, $source, $filter = null, $limit = null, $offset = null ) {
+        $query = " SELECT $fields FROM $source ";
+        if ( isset( $filter ) ) {
+            $query .= " WHERE $filter ";
+        }
+        if ( isset( $limit ) ) {
+            $query .= " LIMIT $filter ";
+        }
+        if ( isset( $offset ) ) {
+            $query .= " OFFSET $filter ";
+        }
+
+        $results = ORM::for_table( $source )->raw_query($query)->find_many();
+        return $results;
+    }
 }

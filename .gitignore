@@ -1,5 +1,12 @@
 config/*
 examples/
+*.sublime-project
+*.sublime-workspace
+
+*.pem
+*.csr
+
+_bku
 
 #logfiles
 bot_log.txt

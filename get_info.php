@@ -3,7 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "config/config.php";
+include dirname( __FILE__ ) . "/config/config.php";
+include dirname( __FILE__ ) . "/helpers/init_db_conex.php";
 
 function decimal_to_rgb($int) {
     $max_value = 16777215;
@@ -14,11 +15,8 @@ function decimal_to_rgb($int) {
     return str_pad(dechex($int),6,"0",STR_PAD_LEFT);
 }
 
-    $mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
 
-    if ($mysqli->connect_errno) {
-        echo "Failed to connect to MySQL: " . $mysqli->connect_error;
-    }
+    $data = $db_connect->query(" SELECT * FROM data ORDER BY date DESC; ");
 ?>
 <html>
 <head>
@@ -44,40 +42,35 @@ function decimal_to_rgb($int) {
     </div>
 <?php
 
-    $result = $mysqli->query("
-        SELECT * FROM `data` ORDER BY `date` DESC;
-    ");
+    
 
     $charting_data = array();
-    if($result){
-        /* execute statement */
-        //$result->execute();
+    if ( !empty( $data ) ){
 
-        // /* bind result variables */
-        // $result->bind_result($name, $code);
-
-        /* fetch values */
         echo "<table border=1>";
-        while ($data = $result->fetch_array(MYSQLI_ASSOC)) {
+        foreach ($data as $row) {
             echo "<tr>";
-            foreach ($data as $key => $value) {
+            foreach ($row as $key => $value) {
+                if ( $key == 'date' ) {
+                    // $value = "<script>date = new Date({$value}000); document.write(date) </script>";
+                    $value = date("Y-m-d H:i:s",$value);
+                }
                 echo "<td>$value</td>";
             }
             echo "</tr>";
 
-            if(isset($charting_data[$data['label']])) {
-                $charting_data[$data['label']]['value'] += $data['amount'];
+            if(isset($charting_data[$row['label']])) {
+                $charting_data[$row['label']]['value'] += $row['amount'];
             } else {
-                $charting_data[$data['label']] = array(
-                    "value"=> $data['amount'],
-                    "label"=> $data['label']
+                $charting_data[$row['label']] = array(
+                    "value"=> $row['amount'],
+                    "label"=> $row['label']
                 );
             }
         }
 
         echo "</table>";
 
-        $result->close();
     }
 
     $chart_array = array();
