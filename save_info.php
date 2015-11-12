@@ -3,34 +3,25 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "config/config.php";
+include dirname( __FILE__ ) . "/config/config.php";
+include dirname( __FILE__ ) . "/helpers/init_db_conex.php";
 
 if(isset($_POST['amount'])){
 
-    $mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
-
-    if ($mysqli->connect_errno) {
-        echo "Failed to connect to MySQL: " . $mysqli->connect_error;
-    }
-
     $date = strtotime($_POST['date']);
 
-    $res = $mysqli->query("
-        INSERT INTO `data`(`concept`,`amount`,`label`,`source`,`date`)
-        VALUES(
-            '{$_POST['concept']}',
-            '{$_POST['amount']}',
-            '{$_POST['label']}',
-            'web',
-            '{$date}'
-        );
+    $db_connect->insert(
+        array(
+            'concept' => $_POST['concept'],
+            'amount'  => $_POST['amount'],
+            'label'   => $_POST['label'],
+            'source'  => 'web',
+            'date'    => $date
+        ),
+        'data'
+    );
 
-    ");
-
-    if (!$res) {
-        echo "Failed to run query: (" . $mysqli->errno . ") " . $mysqli->error;
-    }else {
         echo "info saved";
-    }
+    
 
 }
